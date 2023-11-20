@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map User Location</title>
+    
+    <!--First add the necessary CSS file of the Leaflet map library to the project, enabling its use in the browser. This file contains style information required for implementing map features.-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+    <style>
+      html, body {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+      #map {
+        width: 76%;
+        height: 100%;
+        float: left;
+      }
+      #polygon-list {
+        width: 24%;
+        height: 100%;
+        overflow-y: auto;
+        padding: 10px;
+        box-sizing: border-box;
+        float: left;
+      }
+      .polygon-item {
+        cursor: pointer;
+        padding: 5px;
+        margin-bottom: 5px;
+        border: 1px solid #ddd;
+        background-color: #f9f9f9;
+      }
+      .polygon-item:hover {
+        background-color: #e0e0e0;
+      }
+      .text {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body style="background-color:rgb(7, 145, 145);">
+    <div id="polygon-list">
+        <h2 class="text">List of Protected Sites</h2>
+    </div>
+    <div id="map"></div>
+    <script>
+      // By default, the map will start with a focus on Münster.
+      var map = L.map('map').setView([51.961563, 7.628202], 12);
+
+      // add the OpenStreetMap tiles
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      }).addTo(map);
+
+      // The location of the city of Münster shall be shown with a marker on the map.
+      var marker = L.marker([51.9627, 7.622]).addTo(map);
+      marker.bindPopup("<b>Münster!</b><br>State North Rhine-Westphalia<br>Population 317,713").openPopup();
+
+      // Function to add polygons to the map and list
+      function addPolygonToMapAndList(index, coordinates, name) {
+        var polygon = L.polygon(coordinates).addTo(map);
+        var listItem = document.createElement('div');
+        polygon.bindPopup(name)
+        listItem.className = 'polygon-item';
+        listItem.textContent = name || 'Polygon ' + (index + 1);
+
+        // Highlight the polygon on the map when the list item is clicked
+        listItem.addEventListener('click', function() {
+          map.fitBounds(polygon.getBounds());
+          polygon.setStyle({ fillColor: 'yellow' }); // Customize the highlight color
+        });
+
+        document.getElementById('polygon-list').appendChild(listItem);
+      }
+
+      // The sites where I found information about protected areas are; https://mapcarta.com/de/W394186561 and https://nsg.naturschutzinformationen.nrw.de/nsg/de/fachinfo/gebiete/rp/muenster 
+
+      // Add each polygon to the map and list
+      addPolygonToMapAndList(0, [
+        [51.90336932510354, 7.735209540534318],
+        [51.90209834771648, 7.736325339484513],
+        [51.899185555571286, 7.747311667609513],
+        [51.89870889887601, 7.749114112067521],
+        [51.89791445981253, 7.750830725837052],
+        [51.89754371677551, 7.756924704718888],
+        [51.897861496708, 7.758555487799943],
+        [51.90082733436883, 7.760357932257951],
+        [51.905275723758955, 7.75838382642299],
+        [51.90734089766537, 7.757783011603654],
+        [51.90914122821224, 7.75812633435756],
+        [51.91020021246994, 7.757182196784318],
+        [51.91136506631203, 7.756581381964982],
+        [51.91168274847967, 7.754263953376115],
+        [51.911841588720726, 7.7517748634102945],
+        [51.913105672278284, 7.748373822379411],
+        [51.91104738189703, 7.743191794562638],
+        [51.91242399813113, 7.739758567023576],
+        [51.91252988993966, 7.738213614630998],
+        [51.91395940491523, 7.736840323615373],
+        [51.91454178685833, 7.734694556403459],
+        [51.91395940491523, 7.731518820929826],
+        [51.91242399813113, 7.730574683356584],
+        [51.90982957082019, 7.731518820929826],
+        [51.90617593944371, 7.733063773322404],
+        [51.90336932510354, 7.735209540534318]
+      ], "Naturschutzgebiet Wolbecker Tiergarten (MS-001)");
+
+      addPolygonToMapAndList(1, [
+        [52.01378460058748, 7.6581886242826025],
+        [52.0128469226135, 7.6605596970517675],
+        [52.01299880136548, 7.66125707139564],
+        [52.01454397327767, 7.659154219527964]
+      ], "Naturschutzgebiet Huronensee (MS-002)");
+
+      addPolygonToMapAndList(2, [
+        [51.92598722433171,7.736881997924536],
+        [51.92459779102276,7.73653867517063],
+        [51.924491927673984,7.737354066711157],
+        [51.92537852550934,7.737611558776587],
+        [51.92545792147603,7.737203863006323],
+        [51.92724429359768,7.739070680480689],
+        [51.92753539935429,7.738405492644995],
+        [51.92598722433171,7.736881997924536]
+      ], "Naturschutzgebiet Dabeckskamp (MS-003)");
+
+      addPolygonToMapAndList(3, [
+        [51.91118394585706,7.700222318391661],
+        [51.91193844037874,7.699921910981993],
+        [51.912587030799884,7.699793164949278],
+        [51.913017213156905,7.699514215211729],
+        [51.91312310356658,7.699063604097227],
+        [51.91377829492394,7.697958533983091],
+        [51.913844475337,7.697894160966734],
+        [51.913534225879495,7.697550838212828],
+        [51.912349573537774,7.69725043080316],
+        [51.911436244810766,7.697465007524351],
+        [51.911350205640005,7.697293346147398],
+        [51.91125754788712,7.697261159639219],
+        [51.91118394585706,7.700222318391661]
+      ], "Naturschutzgebiet Bonnenkamp (MS-004)");
+
+      addPolygonToMapAndList(4, [
+        [52.02449278762435, 7.713233703116709],
+        [52.02388542559787, 7.715980285147959],
+        [52.024572008150166, 7.7185552058022555],
+        [52.02470404204805, 7.721988433341318],
+        [52.025047328358355, 7.722417586783701],
+        [52.02578670530807, 7.720207446555429],
+        [52.026328027109, 7.719971412162119],
+        [52.02726542253717, 7.71943497035914],
+        [52.02825560763438, 7.719413512687021],
+        [52.02903453783652, 7.71868395183497],
+        [52.03006428914284, 7.7190058169167575],
+        [52.03036792923169, 7.7196280894082125],
+        [52.031661676935975, 7.720979922751718],
+        [52.03240094453196, 7.720422023276621],
+        [52.032994989992936, 7.71795439098292],
+        [52.02593193862971, 7.710894816855722],
+        [52.02449278762435, 7.713233703116709]
+      ], "Naturschutzgebiet Grosse Bree (MS-005)");
+
+      addPolygonToMapAndList(5, [
+        [51.994088888421906, 7.72397305301324],
+        [51.99329613701603, 7.727835433994685],
+        [51.99418137517163, 7.729273098026668],
+        [51.99691625412967, 7.72920872501031],
+        [51.99715406179618, 7.725432174717342],
+        [51.996414211574354, 7.724187629734431],
+        [51.994088888421906, 7.72397305301324]
+      ], "Naturschutzgebiet Feuchtgebiet Handorf (MS-006)");
+
+      // show the scale bar on the lower left corner
+      L.control.scale({imperial: true, metric: true}).addTo(map);
+    </script>
+  </body>
+</html>
